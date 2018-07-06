@@ -1,9 +1,14 @@
+'''Engine de todos los cálculos que realiza el programa. Llama a módulos
+más pequeños para realizar tareas específicas. Funciona cmo controlador'''
+
 import decimal
+from decimal import Decimal as D
 import json
 # import pymysql as sql
-from decimal import Decimal as D
+
 import sql_management as sqlmng
-import algorithm_analizar_indicador as analizar
+import algorithms.bend.gear_analizar_indicador as analizar
+
 
 class DBBrowser:
 
@@ -177,6 +182,7 @@ class DBBrowser:
             resume_data.append((yesq, total, percent))
         return resume_data
 
+    # Esta función es la que llama el frontend desde "Inicio de los tiempos"
     def complete_resume_table(self, table_number):
         '''Obtiene resumen de una tabla completa, recibe el número de tabla'''
 
@@ -187,6 +193,7 @@ class DBBrowser:
         # ----------------- HACIENDO PRUEBAS CON NUEVO ALGORITMO
         return analizar.get_indicator_all_dates(self.cursor, table_number)
 
+    # Esta función es la que llama el frontend desde "Entre fechas"
     def between_dates_resume(self, table_number, idate, fdate):
         '''Obtiene resumen entre fechas y retorna para mostrarlo'''
 

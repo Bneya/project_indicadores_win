@@ -1,5 +1,8 @@
-import sql_management as sqlmg
 import numpy
+
+
+def router_analizar_indicador():
+    pass
 
 
 def get_indicator_all_dates(cursor, table_number):
@@ -13,9 +16,9 @@ def get_indicator_all_dates(cursor, table_number):
     questions_raw, n_questions = respuesta
     questions_list = questions_raw.split(";") + ["Bundle"]
 
-    print("####query_get_n_questions:", query_get_n_questions)
-    print("questions:", questions_list)
-    print("n_questions:", n_questions)
+    # print("####query_get_n_questions:", query_get_n_questions)
+    # print("questions:", questions_list)
+    # print("n_questions:", n_questions)
 
     txt_select = concatenador_promedios(n_questions)
 
@@ -55,9 +58,3 @@ def concatenador_promedios(number):
     print("texto", texto)
 
     return texto
-
-
-
-
-
-# concatenador_promedios(3)

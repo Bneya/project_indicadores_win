@@ -2,6 +2,7 @@ import sys
 from PyQt5 import uic, QtWidgets, QtCore, QtGui
 from backend_math import DBBrowser
 import pymysql as sql
+import algorithms.fend.face_show_list_in_listview as lw_show
 
 
 MAINSCREEN = uic.loadUiType("ui/main_window.ui")
@@ -110,7 +111,6 @@ class MainWindow(*MAINSCREEN):
 
         if option == "Desde el inicio de los tiempos":
 
-            # print("table_number", table_number)
             resultados = self.engine.complete_resume_table(table_number)
             print("###ESTE TIENE QUE SER EL FORMATO DE LISTA QUE ENTREGUE:###", resultados)
 
@@ -136,7 +136,7 @@ class MainWindow(*MAINSCREEN):
         resultados, table_number = self.get_results_from_db(table_number)
         # ---------------------
 
-        # Muestra los resultados en pantalla
+        # Muestra los resultados en pantalla (Borra los que había antes)
         self.lw_resultados.clear()
 
         # print("resultados", resultados)
@@ -145,28 +145,32 @@ class MainWindow(*MAINSCREEN):
             self.popup.show()
 
         else:
-            for resultado in resultados:
-                print("resultado", resultado)
-                item = QtWidgets.QListWidgetItem(self.lw_resultados)
-                self.lw_resultados.addItem(item)
-                custom_item = CustomItem()
-                custom_item.set_values(resultado)
+            # for resultado in resultados:
+            #     print("resultado", resultado)
+            #     item = QtWidgets.QListWidgetItem(self.lw_resultados)
+            #     self.lw_resultados.addItem(item)
+            #     custom_item = CustomItem()
+            #     custom_item.set_values(resultado)
+            #
+            #     # Si es importante, lo pone en negrita
+            #     importantes = self.engine.get_importants_of_table(table_number)
+            #
+            #     print("importantes", importantes)
+            #     index_pregunta = str(resultados.index(resultado) + 1)
+            #     print("index pregunta", index_pregunta)
+            #
+            #     # Pone en negrita la fila si es parte del bundle
+            #     if index_pregunta in importantes or importantes == ["0"]:
+            #         bold_font = QtGui.QFont()
+            #         bold_font.setBold(True)
+            #         custom_item.lb_name.setFont(bold_font)
+            #
+            #     item.setSizeHint(custom_item.sizeHint())
+            #     self.lw_resultados.setItemWidget(item, custom_item)
 
-                # Si es importante, lo pone en negrita
-                importantes = self.engine.get_importants_of_table(table_number)
+            # Nueva sub función
+            lw_show.show(resultados, self.lw_resultados, CustomItem)
 
-                print("importantes", importantes)
-                index_pregunta = str(resultados.index(resultado) + 1)
-                print("index pregunta", index_pregunta)
-
-                # Pone en negrita la fila si es parte del bundle
-                if index_pregunta in importantes or importantes == ["0"]:
-                    bold_font = QtGui.QFont()
-                    bold_font.setBold(True)
-                    custom_item.lb_name.setFont(bold_font)
-
-                item.setSizeHint(custom_item.sizeHint())
-                self.lw_resultados.setItemWidget(item, custom_item)
 
     def change_searchtype(self):
         '''Cambia el tipo de búsqueda entre fechas o desde siempre en tab1'''
