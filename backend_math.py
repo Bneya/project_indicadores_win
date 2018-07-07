@@ -52,10 +52,12 @@ class DBBrowser:
         save_file.close()
 
     def connect_to_db(self):
+        '''Conecta con la base de datos en el ervidor remoto'''
 
         # self.dbb = sql.connect(self.target_ip, "root", None, "registro")
         self.dbb = self.dbmanager.connect_propio()
 
+    # Deprecated. Movida a algoritms.gear_analizar_indicador
     def getif_betweendates(self, table_number, idate, fdate):
         '''Retorna todos los valores de la tabla table_number
         que estén entre idate y fdate'''
@@ -85,6 +87,7 @@ class DBBrowser:
 
         return preguntas_importantes
 
+    # Deprecated. Cambió la forma de calcular.
     def eval_entry(self, table_number, row):
         '''Evalúa para una entrada de pregunta si es 0 o 1 general, retorna
         ese valor'''
@@ -119,6 +122,7 @@ class DBBrowser:
 
         return result
 
+    # Deprecated. Cambió la forma de calcular
     def calculate_group(self, entry_group, table_number):
         '''Realiza análisis de grupo de preguntas entry_group,
         retorna el resumen'''
@@ -166,6 +170,7 @@ class DBBrowser:
 
         return to_return
 
+    # Deprecated. Cambió el algoritmo de cálculo
     def get_percentajes_group(self, sub_data):
         '''Obtiene los porcentajes de completación de un grupo de preguntas'''
 
@@ -182,26 +187,45 @@ class DBBrowser:
             resume_data.append((yesq, total, percent))
         return resume_data
 
-    # Esta función es la que llama el frontend desde "Inicio de los tiempos"
+    # Deprecated. Se llamaba desde "Inicio de los tiempos" del frontend
     def complete_resume_table(self, table_number):
         '''Obtiene resumen de una tabla completa, recibe el número de tabla'''
 
         # entry_group = self.getall_entries_table(table_number)
         # to_return = self.calculate_group(entry_group, table_number)
         # return to_return
-
+        
         # ----------------- HACIENDO PRUEBAS CON NUEVO ALGORITMO
-        return analizar.get_indicator_all_dates(self.cursor, table_number)
+        info_result = analizar.rt_get_info_indicator(self.cursor,
+                                                     table_n=table_number)
+        return info_result
 
-    # Esta función es la que llama el frontend desde "Entre fechas"
+    # Deprecated. Se llamaba desde "Entre fechas" del frontend
     def between_dates_resume(self, table_number, idate, fdate):
         '''Obtiene resumen entre fechas y retorna para mostrarlo'''
 
-        entry_group = self.getif_betweendates(table_number, idate, fdate)
-        print("entry group", entry_group)
-        to_return = self.calculate_group(entry_group, table_number)
+        # entry_group = self.getif_betweendates(table_number, idate, fdate)
+        # print("entry group", entry_group)
+        # to_return = self.calculate_group(entry_group, table_number)
+        # return to_return
+        info_result = analizar.rt_get_info_indicator(self.cursor,
+                                                     table_n=table_number,
+                                                     idate=idate,
+                                                     fdate=fdate)
+        return info_result
 
-        return to_return
+    # Esta es la función que se está usando actualmente
+    def get_resume_table(self, table_n, idate=False, fdate=False):
+        '''Obtiene el resumen de un indicador desde siempre o entre fechas'''
+        if idate:
+            info_result = analizar.rt_get_info_indicator(self.cursor,
+                                                         table_n=table_n,
+                                                         idate=idate,
+                                                         fdate=fdate)
+        else:
+            info_result = analizar.rt_get_info_indicator(self.cursor,
+                                                         table_n=table_n)
+        return info_result
 
     def get_nombre_pautas(self):
         '''Retorna lista de nombres de todas las pautas en la DB'''

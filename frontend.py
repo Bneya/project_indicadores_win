@@ -2,7 +2,7 @@ import sys
 from PyQt5 import uic, QtWidgets, QtCore, QtGui
 from backend_math import DBBrowser
 import pymysql as sql
-import algorithms.fend.face_show_list_in_listview as lw_show
+import algorithms.fend.face_listview as facelw
 
 
 MAINSCREEN = uic.loadUiType("ui/main_window.ui")
@@ -111,19 +111,25 @@ class MainWindow(*MAINSCREEN):
 
         if option == "Desde el inicio de los tiempos":
 
-            resultados = self.engine.complete_resume_table(table_number)
-            print("###ESTE TIENE QUE SER EL FORMATO DE LISTA QUE ENTREGUE:###", resultados)
+            # resultados = self.engine.complete_resume_table(table_number)
+            # print("###ESTE TIENE QUE SER EL FORMATO DE LISTA QUE ENTREGUE:###", resultados)
+            resultados = self.engine.get_resume_table(table_n=table_number)
 
         elif option == "Entre fechas":
             # print("No implementado")
             # idate = str(self.de_inicio.date().toPyDate()).replace("-", "")
             idate = str(self.de_inicio.date().toString("yyyyMMdd"))
-            print("idate", idate, type(idate))
+            # print("idate", idate, type(idate))
             fdate = str(self.de_final.date().toString("yyyyMMdd"))
             # fdate = str(self.de_final.date().toPyDate()).replace("-", "")
             # print("raw", type(self.de_inicio.date().toPyDate()))
-            print("Inicio: {}; Final: {}".format(idate, fdate))
-            resultados = self.engine.between_dates_resume(table_number, idate, fdate)
+            # print("Inicio: {}; Final: {}".format(idate, fdate))
+
+
+            # resultados = self.engine.between_dates_resume(table_number, idate, fdate)
+            resultados = self.engine.get_resume_table(table_n=table_number,
+                                                      idate=idate,
+                                                      fdate=fdate)
 
         return resultados, table_number
 
@@ -168,9 +174,11 @@ class MainWindow(*MAINSCREEN):
             #     item.setSizeHint(custom_item.sizeHint())
             #     self.lw_resultados.setItemWidget(item, custom_item)
 
-            # Nueva sub función
-            lw_show.show(resultados, self.lw_resultados, CustomItem)
+            # Nueva sub función y lógica ------------------------
+            importants = self.engine.get_importants_of_table(table_number)
 
+            facelw.show(resultados, self.lw_resultados, CustomItem, importants)
+            # facelw.make_bold(self.lw_resultados, [1, 2])
 
     def change_searchtype(self):
         '''Cambia el tipo de búsqueda entre fechas o desde siempre en tab1'''
