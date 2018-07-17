@@ -4,6 +4,9 @@ from PyQt5 import QtWidgets, QtGui
 def show(result_list, listview, listitem, to_bold_list=False):
     '''Toma una <result_list>, tansforma cada uno a un <listitem> y
     lo añade a un <listview>. No retorna nada'''
+
+    print("======esta lista será encajada en el listview:", result_list)
+
     for resultado in result_list:
         print("resultado", resultado)
         item = QtWidgets.QListWidgetItem(listview)
@@ -21,6 +24,19 @@ def show(result_list, listview, listitem, to_bold_list=False):
 
         item.setSizeHint(custom_item.sizeHint())
         listview.setItemWidget(item, custom_item)
+
+
+def show_detailed(result_list, listview, listitem, to_bold_list=False):
+
+    # Limpia la listview
+    listview.clear()
+
+    # Revisa si la fila tiene info o es una consulta vacía
+    if result_list[1] == "consulta vacía":
+        listview.addItem("No hay información para mostrar")
+
+    else:
+        show(result_list, listview, listitem, to_bold_list)
 
 
 # Pobando esta función. No sé cómo acceder al contenido de QListWidgetItem
