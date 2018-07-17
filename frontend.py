@@ -58,6 +58,7 @@ class MainWindow(*MAINSCREEN):
         self.engine = DBBrowser()  # eSTA LINEA HAY QUE SACARLA LUEGO
         self.info_tab_op = None
         self.table_names = None
+        self.list_ids = None
 
         try:
             self.engine = DBBrowser()
@@ -157,14 +158,21 @@ class MainWindow(*MAINSCREEN):
     def click_get_op_perform(self):
         """Llama al motor para mostrar desempeño de un operador"""
 
+        # Limpia la lista actual
+        self.lw_resultados_op.clear()
+
         op_cur = self.cb_operadores.currentText().strip("1234567890- ")
         print("op_actualllllll:", op_cur)
 
-        lista_resumen, list_tot = self.engine.get_operator_performance(op_cur)
+        # Pone el nombre en el título
+        self.lb_current_operator.setText(op_cur)
+
+        list_res, list_tot, ids = self.engine.get_operator_performance(op_cur)
 
         self.info_tab_op = list_tot
-        self.table_names = [item[0] for item in lista_resumen]
-        facelw.show(lista_resumen, self.lw_resultados_op, CustomItem)
+        self.table_names = [item[0] for item in list_res]
+        self.list_ids = ids
+        facelw.show(list_res, self.lw_resultados_op, CustomItem)
 
     def click_op_list_item(self):
         print("hola")
@@ -173,10 +181,15 @@ class MainWindow(*MAINSCREEN):
         print("la fila clickeada es:", clicked_row)
         print("La info de esa fila es:", info_row)
 
-        # to_bold_list = self.engine.get_importants_of_table()
+        # Terminar esta función
+        table_num = self.list_ids[clicked_row]
+        to_bold_list = self.engine.get_importants_of_table(table_num)
 
         self.lb_indicator_name.setText(self.table_names[clicked_row])
-        facelw.show_detailed(info_row, self.lw_resultados_op_detalles, CustomItem)
+        facelw.show_detailed(info_row,
+                             self.lw_resultados_op_detalles,
+                             CustomItem,
+                             to_bold_list)
 
     def change_searchtype(self):
         '''Cambia el tipo de búsqueda entre fechas o desde siempre en tab1'''

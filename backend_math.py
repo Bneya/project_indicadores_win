@@ -109,12 +109,12 @@ class DBBrowser:
         # result = self.keycursor.fetchall()
         # print("result", result)
 
-        lista_resumen, lista_total = opperform.get_op_perform(self.cursor,
+        list_resume, list_tot, ids = opperform.get_op_perform(self.cursor,
                                                               analizar,
                                                               operator)
 
         print("HASTA ACÁ LELGA LA FNCIÓN get_operador_performance de backend")
-        return lista_resumen, lista_total
+        return list_resume, list_tot, ids
 
 
 if __name__ == '__main__':

@@ -4,7 +4,7 @@ en todas las pautas existentes"""
 
 def get_op_perform(cursor, gear_analizar, op, idate=False, fdate=False):
     query_get_n_tablas = "SELECT id FROM preguntas_importantes"
-    query_get_nombre_tablas = "SELECT name FROM preguntas_importantes"
+    query_get_nombre_tablas = "SELECT id, name FROM preguntas_importantes"
 
     cursor.execute(query_get_n_tablas)
     num_of_tables_list = [item[0] for item in cursor.fetchall()]
@@ -12,7 +12,7 @@ def get_op_perform(cursor, gear_analizar, op, idate=False, fdate=False):
     cursor.execute(query_get_nombre_tablas)
     lista_nombres = []
     for item in cursor:
-        lista_nombres.append(item[0])
+        lista_nombres.append("{}- {}".format(item[0], item[1]))
     print("---------num_of_tables_list:", num_of_tables_list)
     print("---------lista_nombres", lista_nombres)
 
@@ -53,4 +53,4 @@ def get_op_perform(cursor, gear_analizar, op, idate=False, fdate=False):
     for item in lista_resumen:
         print(item)
 
-    return lista_resumen, lista_total
+    return lista_resumen, lista_total, num_of_tables_list
