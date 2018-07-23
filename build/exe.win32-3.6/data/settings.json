@@ -1,5 +1,5 @@
 {
-"target_ip": 	"ucireportes.davila.cl",
+"target_ip": 	"localhost",
 "target_user": 	"ucirepor_usuario",
 "target_pass": 	"usuario",
 "target_db": 	"ucirepor_registro"

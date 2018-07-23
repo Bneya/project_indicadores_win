@@ -12,15 +12,17 @@ base = None
 
 executables = [Executable("main_to_execute.py", base=base)]
 
-packages = ["idna"]
+packages = ["idna", "numpy"]
 options = {
     'build_exe': {
 
         'packages': packages,
+        'includes': ["numpy"],
         'include_files': [os.path.join(sys.base_prefix, 'DLLs', 'sqlite3.dll'),
                           (requests.certs.where(), 'cacert.pem'),
                           "ui/",
-                          "data/"]
+                          "data/",
+                          "algorithms/"]
     },
 
 }

@@ -87,6 +87,9 @@ class MainWindow(*MAINSCREEN):
         self.cb_searchtype.addItems(["Todas las fechas",
                                      "Entre fechas específicas"])
 
+        self.cb_searchtype_op.addItems(["Todas las fechas",
+                                        "Entre fechas específicas"])
+
         self.nombres_pautas = self.engine.get_nombre_pautas()
         self.lista_operadores = self.engine.get_all_operators()
         for name in self.nombres_pautas:
@@ -105,6 +108,8 @@ class MainWindow(*MAINSCREEN):
         # Botones de la pestaña <Desempeño de personal> -------------------
         self.bt_search_op_perform.clicked.connect(self.click_get_op_perform)
         self.lw_resultados_op.clicked.connect(self.click_op_list_item)
+        searchop = self.cb_searchtype_op
+        searchop.currentIndexChanged.connect(self.change_searchtype_op)
     # ------------------------------------------------
 
     # ------------------------------------------------
@@ -118,7 +123,8 @@ class MainWindow(*MAINSCREEN):
         # print(option)
 
         indicador_text = self.cb_indicadores.currentText()
-        table_number = self.nombres_pautas.index(indicador_text) + 1
+        # table_number = self.nombres_pautas.index(indicador_text) + 1
+        table_number = self.engine.get_table_id_from_name(indicador_text)
 
         if option == "Todas las fechas":
             resultados = self.engine.get_resume_table(table_n=table_number)
@@ -138,7 +144,10 @@ class MainWindow(*MAINSCREEN):
 
         # Extraer datos de db
         indicador_text = self.cb_indicadores.currentText()
-        table_number = self.nombres_pautas.index(indicador_text) + 1
+        print("indicador_text", indicador_text)
+        # table_number = self.nombres_pautas.index(indicador_text) + 1
+        # table_number = self.engine.get_table_id_from_name(indicador_text)
+        table_number = "no actualizado"
         resultados, table_number = self.get_results_from_db(table_number)
         # ---------------------
 
@@ -158,8 +167,10 @@ class MainWindow(*MAINSCREEN):
     def click_get_op_perform(self):
         """Llama al motor para mostrar desempeño de un operador"""
 
-        # Limpia la lista actual
+        # Limpia lista actual, la lista de dettales y nombre indicador select
         self.lw_resultados_op.clear()
+        self.lw_resultados_op_detalles.clear()
+        self.lb_indicator_name.setText("Indicador")
 
         op_cur = self.cb_operadores.currentText().strip("1234567890- ")
         print("op_actualllllll:", op_cur)
@@ -167,7 +178,19 @@ class MainWindow(*MAINSCREEN):
         # Pone el nombre en el título
         self.lb_current_operator.setText(op_cur)
 
-        list_res, list_tot, ids = self.engine.get_operator_performance(op_cur)
+        option = self.cb_searchtype_op.currentText()
+        if option == "Todas las fechas":
+            tuple_resp = self.engine.get_operator_performance(op_cur)
+            list_res, list_tot, ids = tuple_resp
+
+        elif option == "Entre fechas específicas":
+            idate = str(self.de_inicio_op.date().toString("yyyyMMdd"))
+            fdate = str(self.de_final_op.date().toString("yyyyMMdd"))
+            print("????????????????idate:", idate, "fdate: ", fdate)
+            tuple_resp = self.engine.get_operator_performance(op_cur,
+                                                              idate=idate,
+                                                              fdate=fdate)
+            list_res, list_tot, ids = tuple_resp
 
         self.info_tab_op = list_tot
         self.table_names = [item[0] for item in list_res]
@@ -175,6 +198,8 @@ class MainWindow(*MAINSCREEN):
         facelw.show(list_res, self.lw_resultados_op, CustomItem)
 
     def click_op_list_item(self):
+        '''Muestra los detalles de un indicador en <lw_resultados_op_det>'''
+
         print("hola")
         clicked_row = self.lw_resultados_op.currentRow()
         info_row = self.info_tab_op[clicked_row]
@@ -191,6 +216,7 @@ class MainWindow(*MAINSCREEN):
                              CustomItem,
                              to_bold_list)
 
+    # Activa o desactiva búsqueda de fechas en pestaña <Anaizar indicador>
     def change_searchtype(self):
         '''Cambia el tipo de búsqueda entre fechas o desde siempre en tab1'''
 
@@ -201,6 +227,20 @@ class MainWindow(*MAINSCREEN):
         elif self.cb_searchtype.currentText() == "Todas las fechas":
             self.de_inicio.setEnabled(False)
             self.de_final.setEnabled(False)
+
+        else:
+            print("Falló la comprobación de texto")
+
+    def change_searchtype_op(self):
+        '''Cambia el tipo de búsqueda entre fechas o desde siempre en tab2'''
+
+        if self.cb_searchtype_op.currentText() == "Entre fechas específicas":
+            self.de_inicio_op.setEnabled(True)
+            self.de_final_op.setEnabled(True)
+
+        elif self.cb_searchtype_op.currentText() == "Todas las fechas":
+            self.de_inicio_op.setEnabled(False)
+            self.de_final_op.setEnabled(False)
 
         else:
             print("Falló la comprobación de texto")

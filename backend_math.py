@@ -62,6 +62,20 @@ class DBBrowser:
 
         return preguntas_importantes
 
+    def get_table_id_from_name(self, name_in):
+        """Devuelve el id de una tabla dado su nombre"""
+
+        name_limpio = name_in.strip("1234567890- ")
+
+        query = """SELECT id
+                   FROM preguntas_importantes
+                   WHERE name = '{}'""".format(name_limpio)
+
+        self.cursor.execute(query)
+        id_respuesta = self.cursor.fetchone()[0]
+        print("el id es:", id_respuesta)
+        return id_respuesta
+
     def get_all_operators(self):
         """Retorna todos los id y nombre de operadores de la db"""
 
@@ -101,7 +115,9 @@ class DBBrowser:
         nombres = ["{}- {}".format(nom[0], nom[1]) for nom in nombres_raw]
         return nombres
 
-    def get_operator_performance(self, operator):
+    def get_operator_performance(self, operator, idate=False, fdate=False):
+        '''Reconoce si se busca entre fechas o todo y devuelve resultados
+        al frontend'''
         # query = '''SELECT id, name
         #            FROM preguntas_importantes'''
         #
@@ -109,11 +125,18 @@ class DBBrowser:
         # result = self.keycursor.fetchall()
         # print("result", result)
 
-        list_resume, list_tot, ids = opperform.get_op_perform(self.cursor,
-                                                              analizar,
-                                                              operator)
+        if idate:
+            list_resume, list_tot, ids = opperform.get_op_perform(self.cursor,
+                                                                  analizar,
+                                                                  operator,
+                                                                  idate=idate,
+                                                                  fdate=fdate)
+        else:
+            list_resume, list_tot, ids = opperform.get_op_perform(self.cursor,
+                                                                  analizar,
+                                                                  operator)
 
-        print("HASTA ACÁ LELGA LA FNCIÓN get_operador_performance de backend")
+        print("HASTA ACÁ LLEGA LA FUNCIÓN get_operador_performance de backend")
         return list_resume, list_tot, ids
 
 

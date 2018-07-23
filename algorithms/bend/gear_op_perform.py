@@ -22,7 +22,7 @@ def get_op_perform(cursor, gear_analizar, op, idate=False, fdate=False):
     if idate:
         for num in num_of_tables_list:
             sub_info = gear_analizar.rt_get_info_indicator(cursor,
-                                                           table_n=2,
+                                                           table_n=num,
                                                            idate=idate,
                                                            fdate=fdate,
                                                            op=op)
